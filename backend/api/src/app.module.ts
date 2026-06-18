@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
@@ -8,25 +8,27 @@ import { RoomsModule } from './modules/rooms/rooms.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5434,
-      username: 'admin',
-      password: 'admin',
-      database: 'corporate',
-      autoLoadEntities: true,
-      synchronize: true, // SOLO desarrollo
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
-
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.getOrThrow<string>('DB_HOST'),
+        port: Number(configService.getOrThrow<string>('DB_PORT')),
+        username: configService.getOrThrow<string>('DB_USERNAME'),
+        password: configService.getOrThrow<string>('DB_PASSWORD'),
+        database: configService.getOrThrow<string>('DB_DATABASE'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: true,
+      }),
+    }),
     AuthModule,
-
     UsersModule,
     ReservationsModule,
-    RoomsModule
-    
+    RoomsModule,
   ],
 })
 export class AppModule {}

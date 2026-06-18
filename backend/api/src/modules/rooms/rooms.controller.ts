@@ -8,6 +8,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -18,6 +19,8 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../users/user.entity';
 
+@ApiTags('rooms')
+@ApiBearerAuth()
 @Controller('rooms')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class RoomsController {
