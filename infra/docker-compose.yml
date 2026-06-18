@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   db:
     image: postgres:17
@@ -13,6 +11,41 @@ services:
       - "5434:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d corporate"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ../backend/api
+    container_name: corporate-api
+    restart: always
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      DB_DATABASE: corporate
+      JWT_SECRET: super_secret_key_change_me
+      JWT_EXPIRES_IN: 1h
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ../frontend/web
+    container_name: corporate-web
+    restart: always
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
 
 volumes:
   pgdata:
