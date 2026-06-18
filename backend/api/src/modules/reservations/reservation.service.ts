@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Reservation } from './reservation.entity';
@@ -57,5 +57,34 @@ export class ReservationsService {
         user: true,
       },
     });
+  }
+
+  async findByUser(userId: string) {
+    return this.reservationRepo.find({
+      where: {
+        userId,
+      },
+      relations: {
+        room: true,
+      },
+      order: {
+        startDate: 'ASC',
+      },
+    });
+  }
+
+  async cancel(id: string, userId: string) {
+    const reservation = await this.reservationRepo.findOne({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+
+    return this.reservationRepo.remove(reservation);
   }
 }
