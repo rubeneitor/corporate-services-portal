@@ -18,4 +18,8 @@ export class UsersService {
     const newUser = this.usersRepo.create(user);
     return this.usersRepo.save(newUser);
   }
+
+  findById(id: string) {
+  return this.usersRepo.findOne({ where: {id}});
+}
 }
