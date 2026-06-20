@@ -36,10 +36,27 @@ async function bootstrap() {
 
   SwaggerModule.setup('docs', app, document);
 
-  app.enableCors({
-    origin: process.env.CORS_ORIGIN?.split(',').map((origin) => origin.trim()) ?? [
+  const corsOrigins = new Set(
+    [
       'http://localhost:4200',
-    ],
+      'https://corporate-services-portal-1.onrender.com',
+      ...(process.env.CORS_ORIGIN?.split(',').map((origin) => origin.trim()) ??
+        []),
+    ].filter(Boolean),
+  );
+
+  app.enableCors({
+    origin: (
+      origin: string | undefined,
+      callback: (error: Error | null, allow?: boolean) => void,
+    ) => {
+      if (!origin || corsOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`Origin ${origin} is not allowed by CORS`));
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
