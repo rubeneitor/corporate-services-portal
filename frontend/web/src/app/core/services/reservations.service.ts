@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { CreateReservationDto, Reservation } from '../../shared/models/reservation.model';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { CreateReservationDto, Reservation } from '../../shared/models/reservati
 })
 export class ReservationsService {
   private readonly http = inject(HttpClient);
-  private apiUrl = '/api/reservations';
+  private readonly apiUrl = `${environment.apiUrl}/api/reservations`;
 
   getAll(): Observable<Reservation[]> {
     return this.http.get<Reservation[]>(this.apiUrl);

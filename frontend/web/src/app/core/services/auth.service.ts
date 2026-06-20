@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { tap } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { LoginRequest, LoginResponse } from '../../shared/models/auth.models';
 import { User } from '../../shared/models/user.model';
 
@@ -11,6 +12,7 @@ const TOKEN_KEY = 'access_token';
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/api/auth`;
   private readonly token = signal<string | null>(localStorage.getItem(TOKEN_KEY));
   private readonly currentUser = signal<User | null>(null);
 
@@ -24,7 +26,7 @@ export class AuthService {
   readonly canDeleteRooms = computed(() => this.userRole() === 'ADMIN');
 
   login(credentials: LoginRequest) {
-    return this.http.post<LoginResponse>('/api/auth/login', credentials).pipe(
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap((response) => {
         localStorage.setItem(TOKEN_KEY, response.access_token);
         this.token.set(response.access_token);
@@ -34,7 +36,7 @@ export class AuthService {
   }
 
   register(credentials: LoginRequest & { name: string }) {
-    return this.http.post<LoginResponse>('/api/auth/register', credentials).pipe(
+    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, credentials).pipe(
       tap((response) => {
         localStorage.setItem(TOKEN_KEY, response.access_token);
         this.token.set(response.access_token);
@@ -54,7 +56,7 @@ export class AuthService {
   }
 
   loadCurrentUser() {
-    return this.http.get<User>('/api/auth/me').pipe(
+    return this.http.get<User>(`${this.apiUrl}/me`).pipe(
       tap((user) => {
         this.currentUser.set(user);
       }),
