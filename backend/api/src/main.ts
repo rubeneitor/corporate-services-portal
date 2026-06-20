@@ -44,13 +44,15 @@ async function bootstrap() {
         []),
     ].filter(Boolean),
   );
+  const isRenderOrigin = (origin: string) =>
+    /^https:\/\/[a-z0-9-]+\.onrender\.com$/i.test(origin);
 
   app.enableCors({
     origin: (
       origin: string | undefined,
       callback: (error: Error | null, allow?: boolean) => void,
     ) => {
-      if (!origin || corsOrigins.has(origin)) {
+      if (!origin || corsOrigins.has(origin) || isRenderOrigin(origin)) {
         callback(null, true);
         return;
       }
@@ -58,7 +60,9 @@ async function bootstrap() {
       callback(new Error(`Origin ${origin} is not allowed by CORS`));
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
+    optionsSuccessStatus: 204,
   });
 
   await app.listen(process.env.PORT ?? 3000);
