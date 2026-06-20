@@ -23,4 +23,20 @@ export class CreateRoomDto {
   })
   @IsEnum(RoomType)
   type: RoomType;
+
+  @ApiProperty({
+    example: 10
+  })
+  @IsInt()
+  @Min(1)
+  pricePerHour: number;
+
+  @ApiProperty({
+    example: 'Sala de meeting para 10 personas'
+  })
+  @IsString()
+  description: string;
+
+
+
 }

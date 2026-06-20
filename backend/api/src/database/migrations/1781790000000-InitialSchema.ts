@@ -30,7 +30,11 @@ export class InitialSchema1781790000000 implements MigrationInterface {
         "name" character varying NOT NULL,
         "capacity" integer NOT NULL,
         "type" "public"."room_type_enum" NOT NULL DEFAULT 'MEETING',
+        "pricePerHour" numeric(10,2) NOT NULL DEFAULT '50',
+        "description" character varying,
         "isActive" boolean NOT NULL DEFAULT true,
+        "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+        "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
         CONSTRAINT "PK_room_id" PRIMARY KEY ("id")
       )
     `);

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 export enum RoomType {
   MEETING = 'MEETING',
@@ -25,6 +25,18 @@ export class Room {
   })
   type: RoomType;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 50 })
+  pricePerHour: number;
+
+  @Column({ nullable: true })
+  description: string;
+
   @Column({ default: true })
   isActive: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
