@@ -1,0 +1,45 @@
+.rooms {
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+
+      h1 {
+        font-size: 32px;
+        margin-bottom: 24px;
+        color: #333;
+      }
+    }
+
+    .filters-card {
+      margin-bottom: 24px;
+
+      mat-card-content {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+
+      .filter-field {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      button {
+        height: 56px;
+      }
+    }
+
+    .table-card {
+      margin-bottom: 24px;
+    }
+
+    .rooms-table {
+      width: 100%;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #999;
+      padding: 24px;
+    }

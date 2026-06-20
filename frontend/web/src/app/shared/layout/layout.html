@@ -1,0 +1,40 @@
+<mat-toolbar color="primary" class="toolbar">
+  <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="spacer">Corporate Services Portal</span>
+  <span class="user-info">
+    {{ user()?.name || user()?.email }}
+    <small *ngIf="user()">({{ user()?.role }})</small>
+  </span>
+  <button mat-icon-button (click)="logout()" matTooltip="Logout">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav class="sidenav" mode="side" [opened]="true">
+    <mat-nav-list>
+      <h2 matSubheader>Menú</h2>
+
+      <mat-list-item routerLink="/dashboard" routerLinkActive="active">
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </mat-list-item>
+
+      <mat-list-item routerLink="/rooms" routerLinkActive="active">
+        <mat-icon matListItemIcon>meeting_room</mat-icon>
+        <span matListItemTitle>Salas</span>
+      </mat-list-item>
+
+      <mat-list-item routerLink="/reservations" routerLinkActive="active">
+        <mat-icon matListItemIcon>event</mat-icon>
+        <span matListItemTitle>Reservas</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

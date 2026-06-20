@@ -1,0 +1,98 @@
+<main class="rooms">
+      <h1>Salas</h1>
+
+      <!-- Filtros -->
+      <mat-card class="filters-card">
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Buscar por nombre</mat-label>
+            <input matInput [(ngModel)]="searchText" (ngModelChange)="filterRooms()" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Capacidad mínima</mat-label>
+            <input matInput type="number" [(ngModel)]="minCapacity" (ngModelChange)="filterRooms()" />
+          </mat-form-field>
+
+          <button
+            *ngIf="canCreateRooms()"
+            mat-raised-button
+            color="primary"
+            (click)="openCreateDialog()"
+          >
+            <mat-icon>add</mat-icon>
+            Nueva Sala
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Tabla de Salas -->
+      <mat-card class="table-card">
+        <mat-card-content>
+          <div *ngIf="filteredRooms().length > 0; else noRooms">
+            <table mat-table [dataSource]="filteredRooms()" class="rooms-table">
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.name }}
+                </td>
+              </ng-container>
+
+              <!-- Capacity Column -->
+              <ng-container matColumnDef="capacity">
+                <th mat-header-cell *matHeaderCellDef>Capacidad</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.capacity }} personas
+                </td>
+              </ng-container>
+
+              <!-- Price Column -->
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef>Precio/Hora</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.pricePerHour | currency }}
+                </td>
+              </ng-container>
+
+              <!-- Description Column -->
+              <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef>Descripción</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.description || '-' }}
+                </td>
+              </ng-container>
+
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                <td mat-cell *matCellDef="let element">
+                  <button
+                    *ngIf="canUpdateRooms()"
+                    mat-icon-button
+                    color="primary"
+                    (click)="openEditDialog(element)"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button
+                    *ngIf="canDeleteRooms()"
+                    mat-icon-button
+                    color="warn"
+                    (click)="deleteRoom(element.id)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
+            </table>
+          </div>
+          <ng-template #noRooms>
+            <p class="no-data">No hay salas disponibles</p>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </main>

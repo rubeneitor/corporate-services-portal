@@ -1,0 +1,58 @@
+<main class="login-page">
+  <section class="login-panel">
+    <div class="login-header">
+      <p class="eyebrow">Corporate Services Portal</p>
+      <h1>Acceso</h1>
+      <p class="description">Inicia sesión para gestionar salas y reservas.</p>
+    </div>
+
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+            />
+            <mat-icon matSuffix>mail</mat-icon>
+            @if (form.controls.email.hasError('required')) {
+              <mat-error>El email es obligatorio.</mat-error>
+            } @else if (form.controls.email.hasError('email')) {
+              <mat-error>Introduce un email válido.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Contraseña</mat-label>
+            <input
+              matInput
+              type="password"
+              formControlName="password"
+            />
+            <mat-icon matSuffix>lock</mat-icon>
+            @if (form.controls.password.hasError('required')) {
+              <mat-error>La contraseña es obligatoria.</mat-error>
+            } @else if (form.controls.password.hasError('minlength')) {
+              <mat-error>Debe tener al menos 6 caracteres.</mat-error>
+            }
+          </mat-form-field>
+
+          @if (errorMessage()) {
+            <p class="form-error">{{ errorMessage() }}</p>
+          }
+
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="loading()"
+          >
+            {{ loading() ? 'Entrando...' : 'Entrar' }}
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</main>

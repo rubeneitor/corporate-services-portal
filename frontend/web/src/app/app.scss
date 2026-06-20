@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+app-layout {
+  display: block;
+  height: 100%;
+}
+
+router-outlet ~ * {
+  display: block;
+  height: 100%;
+}
