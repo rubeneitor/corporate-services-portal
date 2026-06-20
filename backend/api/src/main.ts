@@ -39,7 +39,7 @@ async function bootstrap() {
   const corsOrigins = new Set(
     [
       'http://localhost:4200',
-      'https://corporate-services-portal1.onrender.com',
+      'https://corporate-services-portal-web.onrender.com',
       ...(process.env.CORS_ORIGIN?.split(',').map((origin) => origin.trim()) ??
         []),
     ].filter(Boolean),
