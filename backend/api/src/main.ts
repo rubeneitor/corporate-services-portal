@@ -36,33 +36,21 @@ async function bootstrap() {
 
   SwaggerModule.setup('docs', app, document);
 
-  const corsOrigins = new Set(
-    [
-      'http://localhost:4200',
-      'https://corporate-services-portal-web.onrender.com',
-      ...(process.env.CORS_ORIGIN?.split(',').map((origin) => origin.trim()) ??
-        []),
-    ].filter(Boolean),
-  );
-  const isRenderOrigin = (origin: string) =>
-    /^https:\/\/[a-z0-9-]+\.onrender\.com$/i.test(origin);
+  // const corsOrigins = new Set(
+  //   [
+  //     'http://localhost:4200',
+  //     'https://corporate-services-portal-web.onrender.com',
+  //     ...(process.env.CORS_ORIGIN?.split(',').map((origin) => origin.trim()) ??
+  //       []),
+  //   ].filter(Boolean),
+  // );
+  // const isRenderOrigin = (origin: string) =>
+  //   /^https:\/\/[a-z0-9-]+\.onrender\.com$/i.test(origin);
 
   app.enableCors({
-    origin: (
-      origin: string | undefined,
-      callback: (error: Error | null, allow?: boolean) => void,
-    ) => {
-      if (!origin || corsOrigins.has(origin) || isRenderOrigin(origin)) {
-        callback(null, true);
-        return;
-      }
-
-      callback(new Error(`Origin ${origin} is not allowed by CORS`));
-    },
+    origin: 'http://localhost:4200',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
-    optionsSuccessStatus: 204,
   });
 
   await app.listen(process.env.PORT ?? 3000);
