@@ -18,7 +18,11 @@ export class RoomsService {
   }
 
   findAll() {
-    return this.roomRepo.find();
+    return this.roomRepo.find({
+      order: {
+        createdAt: 'ASC',
+      },
+    });
   }
 
   async findOne(id: string) {
