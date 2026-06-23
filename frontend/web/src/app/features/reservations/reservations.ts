@@ -1,6 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +20,7 @@ import { ReservationsService } from '../../core/services/reservations.service';
 import { RoomsService } from '../../core/services/rooms.service';
 import { Reservation } from '../../shared/models/reservation.model';
 import { Room } from '../../shared/models/room.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-reservations',
@@ -86,7 +93,10 @@ export class Reservations implements OnInit {
 
       this.reservationsService.create({ roomId, startDate: start, endDate: end }).subscribe({
         next: () => {
-          alert('Reservación creada exitosamente');
+          Swal.fire({
+            title: 'Reserva creada exitosamente',
+            icon: 'success',
+          });
           this.reservationForm.reset();
           this.loadMyReservations();
         },
@@ -96,15 +106,28 @@ export class Reservations implements OnInit {
   }
 
   cancelReservation(id: string): void {
-    if (confirm('¿Deseas cancelar esta reservación?')) {
-      this.reservationsService.cancel(id).subscribe({
-        next: () => {
-          alert('Reservación cancelada');
-          this.loadMyReservations();
-        },
-        error: (err) => alert('Error: ' + err.error.message),
-      });
-    }
+    Swal.fire({
+      title: '¿Deseas cancelar esta Reserva?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'No',
+      confirmButtonText: 'Si, cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.reservationsService.cancel(id).subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Reserva cancelada!',
+              icon: 'success',
+            });
+            this.loadMyReservations();
+          },
+          error: (err) => alert('Error: ' + err.error.message),
+        });
+      }
+    });
   }
 
   calculateDuration(reservation: Reservation): number {
@@ -140,4 +163,3 @@ export class Reservations implements OnInit {
     return now >= start;
   }
 }
-

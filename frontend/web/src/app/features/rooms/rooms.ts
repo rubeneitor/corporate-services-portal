@@ -12,6 +12,7 @@ import { RoomsService } from '../../core/services/rooms.service';
 import { Room } from '../../shared/models/room.model';
 import { AuthService } from '../../core/services/auth.service';
 import { RoomForm } from './room-form/room-form';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-rooms',
@@ -51,7 +52,7 @@ export class Rooms implements OnInit {
   });
 
   searchText = '';
-  minCapacity = 0;
+  minCapacity: number | null = null;
 
   ngOnInit(): void {
     this.loadRooms();
@@ -68,48 +69,65 @@ export class Rooms implements OnInit {
   }
 
   filterRooms(): void {
-    this.filteredRooms.set(this.rooms().filter((room) => {
-      const matchesSearch = room.name.toLowerCase().includes(this.searchText.toLowerCase());
-      const matchesCapacity = room.capacity >= this.minCapacity;
-      return matchesSearch && matchesCapacity;
-    }));
+    const minCapacity = this.minCapacity ?? 0;
+    this.filteredRooms.set(
+      this.rooms().filter((room) => {
+        const matchesSearch = room.name.toLowerCase().includes(this.searchText.toLowerCase());
+        const matchesCapacity = room.capacity >= minCapacity;
+        return matchesSearch && matchesCapacity;
+      }),
+    );
   }
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(RoomForm, {
-    width: '500px',
-    data: null
-    })
+      width: '500px',
+      data: null,
+    });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('result', result)
-    if (result) {
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('result', result);
+      if (result) {
         this.loadRooms();
-    }
-  });
+      }
+    });
   }
 
   openEditDialog(room: Room): void {
     const dialogRef = this.dialog.open(RoomForm, {
-    width: '500px',
-    data: room
-    })
+      width: '500px',
+      data: room,
+    });
 
-    dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.loadRooms();
-    }
-  });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadRooms();
+      }
+    });
   }
 
   deleteRoom(id: string): void {
-    if (confirm('¿Seguro que quieres eliminar esta sala?')) {
-      this.roomsService.delete(id).subscribe({
-        next: () => {
-          this.loadRooms();
-        },
-        error: (err) => console.error('Error deleting room:', err),
-      });
-    }
+    Swal.fire({
+      html: '¿Seguro que quieres eliminar esta sala?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'No',
+      confirmButtonText: 'Si, eliminar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.roomsService.delete(id).subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Sala eliminada!',
+              icon: 'success',
+            });
+            this.loadRooms();
+          },
+          error: (err) => alert('Error deleting room: ' + err.error.message),
+        });
+      }
+    });
   }
 }
