@@ -1,127 +1,121 @@
 <main class="reservations">
-      <h1>Reservas</h1>
+  <h1>Reservas</h1>
 
-      <!-- Crear Reserva -->
-      <mat-card class="create-card">
-        <mat-card-header>
-          <mat-card-title>Nueva Reserva</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="reservationForm" (ngSubmit)="createReservation()">
-            <div class="form-row">
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>Sala</mat-label>
-                <mat-select formControlName="roomId">
-                  <mat-option *ngFor="let room of rooms" [value]="room.id">
-                    {{ room.name }} ({{ room.capacity }} personas)
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+  <!-- Crear Reserva -->
+  <mat-card class="create-card">
+    <mat-card-header>
+      <mat-card-title>Nueva Reserva</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="reservationForm" (ngSubmit)="createReservation()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Sala</mat-label>
+            <mat-select formControlName="roomId">
+              <mat-option *ngFor="let room of rooms" [value]="room.id">
+                {{ room.name }} ({{ room.capacity }} personas)
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>Fecha y hora inicio</mat-label>
-                <input matInput type="datetime-local" formControlName="startDate" />
-              </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Fecha y hora inicio</mat-label>
+            <input matInput type="datetime-local" formControlName="startDate" />
+          </mat-form-field>
 
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>Fecha y hora fin</mat-label>
-                <input matInput type="datetime-local" formControlName="endDate" />
-              </mat-form-field>
-            </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Fecha y hora fin</mat-label>
+            <input matInput type="datetime-local" formControlName="endDate" />
+          </mat-form-field>
+        </div>
 
-            <button
-              mat-raised-button
-              color="primary"
-              type="submit"
-              [disabled]="!reservationForm.valid"
-            >
-              <mat-icon>add</mat-icon>
-              Crear Reserva
-            </button>
-          </form>
-        </mat-card-content>
-      </mat-card>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!reservationForm.valid">
+          <mat-icon>add</mat-icon>
+          Crear Reserva
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
 
-      <!-- Mis Reservas -->
-      <mat-card class="reservations-card">
-        <mat-card-header>
-          <mat-card-title>Mis Reservas</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div *ngIf="myReservations().length > 0; else noReservations">
-            <table mat-table [dataSource]="myReservations()" class="reservations-table">
-              <!-- Sala Column -->
-              <ng-container matColumnDef="room">
-                <th mat-header-cell *matHeaderCellDef>Sala</th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.room?.name }}
-                </td>
-              </ng-container>
+  <!-- Mis Reservas -->
+  <mat-card class="reservations-card">
+    <mat-card-header>
+      <mat-card-title>Mis Reservas</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (myReservations().length > 0) {
+        <div>
+          <table mat-table [dataSource]="myReservations()" class="reservations-table">
+            <!-- Sala Column -->
+            <ng-container matColumnDef="room">
+              <th mat-header-cell *matHeaderCellDef>Sala</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.room?.name }}
+              </td>
+            </ng-container>
 
-              <!-- Fecha Inicio Column -->
-              <ng-container matColumnDef="startDate">
-                <th mat-header-cell *matHeaderCellDef>Inicio</th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.startDate | date: 'dd/MM/yyyy HH:mm' }}
-                </td>
-              </ng-container>
+            <!-- Fecha Inicio Column -->
+            <ng-container matColumnDef="startDate">
+              <th mat-header-cell *matHeaderCellDef>Inicio</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.startDate | date: 'dd/MM/yyyy HH:mm' }}
+              </td>
+            </ng-container>
 
-              <!-- Fecha Fin Column -->
-              <ng-container matColumnDef="endDate">
-                <th mat-header-cell *matHeaderCellDef>Fin</th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.endDate | date: 'dd/MM/yyyy HH:mm' }}
-                </td>
-              </ng-container>
+            <!-- Fecha Fin Column -->
+            <ng-container matColumnDef="endDate">
+              <th mat-header-cell *matHeaderCellDef>Fin</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.endDate | date: 'dd/MM/yyyy HH:mm' }}
+              </td>
+            </ng-container>
 
-              <!-- Duración Column -->
-              <ng-container matColumnDef="duration">
-                <th mat-header-cell *matHeaderCellDef>Duración</th>
-                <td mat-cell *matCellDef="let element">
-                  {{ calculateDuration(element) }}h
-                </td>
-              </ng-container>
+            <!-- Duración Column -->
+            <ng-container matColumnDef="duration">
+              <th mat-header-cell *matHeaderCellDef>Duración</th>
+              <td mat-cell *matCellDef="let element">{{ calculateDuration(element) }}h</td>
+            </ng-container>
 
-              <!-- Precio Column -->
-              <ng-container matColumnDef="price">
-                <th mat-header-cell *matHeaderCellDef>Precio</th>
-                <td mat-cell *matCellDef="let element">
-                  {{ calculatePrice(element) | currency }}
-                </td>
-              </ng-container>
+            <!-- Precio Column -->
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>Precio</th>
+              <td mat-cell *matCellDef="let element">
+                {{ calculatePrice(element) | currency: 'EUR' }}
+              </td>
+            </ng-container>
 
-              <!-- Estado Column -->
-              <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef>Estado</th>
-                <td mat-cell *matCellDef="let element">
-                  <span [ngClass]="getStatusClass(element)">
-                    {{ getStatus(element) }}
-                  </span>
-                </td>
-              </ng-container>
+            <!-- Estado Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let element">
+                <span [ngClass]="getStatusClass(element)">
+                  {{ getStatus(element) }}
+                </span>
+              </td>
+            </ng-container>
 
-              <!-- Acciones Column -->
-              <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Acciones</th>
-                <td mat-cell *matCellDef="let element">
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="cancelReservation(element.id)"
-                    [disabled]="isPastReservation(element)"
-                  >
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </td>
-              </ng-container>
+            <!-- Acciones Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="cancelReservation(element.id)"
+                  [disabled]="isPastReservation(element)"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-            </table>
-          </div>
-          <ng-template #noReservations>
-            <p class="no-data">No tienes reservas aún</p>
-          </ng-template>
-        </mat-card-content>
-      </mat-card>
-    </main>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+      } @else {
+        <p class="no-data">No tienes reservas aún</p>
+      }
+    </mat-card-content>
+  </mat-card>
+</main>

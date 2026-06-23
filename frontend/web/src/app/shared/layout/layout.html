@@ -5,7 +5,9 @@
   <span class="spacer">Corporate Services Portal</span>
   <span class="user-info">
     {{ user()?.name || user()?.email }}
-    <small *ngIf="user()">({{ user()?.role }})</small>
+    @if (user()) {
+      <small>({{ user()?.role }})</small>
+    }
   </span>
   <button mat-icon-button (click)="logout()" matTooltip="Logout">
     <mat-icon>logout</mat-icon>

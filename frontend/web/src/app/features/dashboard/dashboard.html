@@ -1,110 +1,114 @@
 <main class="dashboard">
-      <h1>Dashboard</h1>
+  <h1>Dashboard</h1>
 
-      <!-- Tarjetas Resumen -->
-      <section class="summary-cards">
-        <mat-card class="summary-card">
-          <mat-card-header>
-            <mat-icon>meeting_room</mat-icon>
-            <mat-card-title>Salas</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="number">{{ totalRooms() }}</p>
-            <p class="subtitle">Total disponibles</p>
-          </mat-card-content>
-        </mat-card>
+  <!-- Tarjetas Resumen -->
+  <section class="summary-cards">
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-icon>meeting_room</mat-icon>
+        <mat-card-title>Salas</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="number">{{ totalRooms() }}</p>
+        <p class="subtitle">Total disponibles</p>
+      </mat-card-content>
+    </mat-card>
 
-        <mat-card class="summary-card">
-          <mat-card-header>
-            <mat-icon>event</mat-icon>
-            <mat-card-title>Mis Reservas</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="number">{{ myReservations().length }}</p>
-            <p class="subtitle">Total reservas</p>
-          </mat-card-content>
-        </mat-card>
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-icon>event</mat-icon>
+        <mat-card-title>Mis Reservas</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="number">{{ myReservations().length }}</p>
+        <p class="subtitle">Total reservas</p>
+      </mat-card-content>
+    </mat-card>
 
-        <mat-card class="summary-card">
-          <mat-card-header>
-            <mat-icon>schedule</mat-icon>
-            <mat-card-title>Próximas</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="number">{{ upcomingReservations().length }}</p>
-            <p class="subtitle">En los próximos 7 días</p>
-          </mat-card-content>
-        </mat-card>
-      </section>
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-icon>schedule</mat-icon>
+        <mat-card-title>Próximas</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="number">{{ upcomingReservations().length }}</p>
+        <p class="subtitle">En los próximos 7 días</p>
+      </mat-card-content>
+    </mat-card>
+  </section>
 
-      <!-- Mis Reservas -->
-      <section class="my-reservations">
-        <h2>Mis Reservas</h2>
-        <mat-card>
-          <mat-card-content>
-            <div *ngIf="myReservations().length > 0; else noReservations">
-              <table mat-table [dataSource]="myReservations()" class="reservations-table">
-                <!-- Sala Column -->
-                <ng-container matColumnDef="room">
-                  <th mat-header-cell *matHeaderCellDef>Sala</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ element.room?.name }}
-                  </td>
-                </ng-container>
+  <!-- Mis Reservas -->
+  <section class="my-reservations">
+    <h2>Mis Reservas</h2>
+    <mat-card>
+      <mat-card-content>
+        @if (myReservations().length > 0) {
+          <div>
+            <table mat-table [dataSource]="myReservations()" class="reservations-table">
+              <!-- Sala Column -->
+              <ng-container matColumnDef="room">
+                <th mat-header-cell *matHeaderCellDef>Sala</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.room?.name }}
+                </td>
+              </ng-container>
 
-                <!-- Fecha Inicio Column -->
-                <ng-container matColumnDef="startDate">
-                  <th mat-header-cell *matHeaderCellDef>Inicio</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ element.startDate | date: 'dd/MM/yyyy HH:mm' }}
-                  </td>
-                </ng-container>
+              <!-- Fecha Inicio Column -->
+              <ng-container matColumnDef="startDate">
+                <th mat-header-cell *matHeaderCellDef>Inicio</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.startDate | date: 'dd/MM/yyyy HH:mm' }}
+                </td>
+              </ng-container>
 
-                <!-- Fecha Fin Column -->
-                <ng-container matColumnDef="endDate">
-                  <th mat-header-cell *matHeaderCellDef>Fin</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ element.endDate | date: 'dd/MM/yyyy HH:mm' }}
-                  </td>
-                </ng-container>
+              <!-- Fecha Fin Column -->
+              <ng-container matColumnDef="endDate">
+                <th mat-header-cell *matHeaderCellDef>Fin</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.endDate | date: 'dd/MM/yyyy HH:mm' }}
+                </td>
+              </ng-container>
 
-                <!-- Precio Column -->
-                <ng-container matColumnDef="price">
-                  <th mat-header-cell *matHeaderCellDef>Precio</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ calculatePrice(element) | currency }}
-                  </td>
-                </ng-container>
+              <!-- Precio Column -->
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef>Precio</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ calculatePrice(element) | currency: 'EUR' }}
+                </td>
+              </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-              </table>
-            </div>
-            <ng-template #noReservations>
-              <p class="no-data">No tienes reservas aún</p>
-            </ng-template>
-          </mat-card-content>
-        </mat-card>
-      </section>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </div>
+        } @else {
+          <p class="no-data">No tienes reservas aún</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
 
-      <!-- Próximas Reservas -->
-      <section class="upcoming-reservations">
-        <h2>Próximas Reservas (7 días)</h2>
-        <mat-card>
-          <mat-card-content>
-            <div *ngIf="upcomingReservations().length > 0; else noUpcoming">
-              <div *ngFor="let reservation of upcomingReservations()" class="reservation-item">
+  <!-- Próximas Reservas -->
+  <section class="upcoming-reservations">
+    <h2>Próximas Reservas (7 días)</h2>
+    <mat-card>
+      <mat-card-content>
+        @if (upcomingReservations().length > 0) {
+          <div>
+            @for (reservation of upcomingReservations(); track reservation.id) {
+              <div class="reservation-item">
                 <mat-icon>event_available</mat-icon>
                 <div class="details">
                   <h4>{{ reservation.room?.name }}</h4>
                   <p>{{ reservation.startDate | date: 'EEEE, dd MMMM HH:mm' }}</p>
                 </div>
               </div>
-            </div>
-            <ng-template #noUpcoming>
-              <p class="no-data">No hay reservas próximas</p>
-            </ng-template>
-          </mat-card-content>
-        </mat-card>
-      </section>
-    </main>
+            }
+          </div>
+        } @else {
+          <p class="no-data">No hay reservas próximas</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+</main>
