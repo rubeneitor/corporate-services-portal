@@ -19,22 +19,7 @@ export const routes: Routes = [
       },
       {
         path: 'rooms',
-        children: [
-          {
-            path: '',
-            loadComponent: () => import('./features/rooms/rooms').then((m) => m.Rooms),
-          },
-          {
-            path: 'new',
-            loadComponent: () =>
-              import('./features/rooms/room-form/room-form').then((m) => m.RoomForm),
-          },
-          {
-            path: ':id/edit',
-            loadComponent: () =>
-              import('./features/rooms/room-form/room-form').then((m) => m.RoomForm),
-          },
-        ],
+        loadComponent: () => import('./features/rooms/rooms').then((module) => module.Rooms),
       },
       {
         path: 'reservations',

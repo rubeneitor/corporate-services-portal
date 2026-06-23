@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RoomsService } from '../../../core/services/rooms.service';
 import { Rooms } from '../rooms';
-import { Room } from '../../../shared/models/room.model';
+import { Room, RoomType } from '../../../shared/models/room.model';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,6 +10,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { validate } from '@angular/forms/signals';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-room-form',
@@ -19,6 +21,8 @@ import { validate } from '@angular/forms/signals';
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    MatOptionModule,
+    MatSelectModule,
   ],
   templateUrl: './room-form.html',
   styleUrl: './room-form.scss',
@@ -33,12 +37,12 @@ export class RoomForm {
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
-  readonly form = this.formBuilder.nonNullable.group({
+  readonly form = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(5)]],
-    capacity: [0, [Validators.required]],
-    pricePerHour: [0, [Validators.required]],
+    capacity: [null, [Validators.required]],
+    pricePerHour: [null, [Validators.required]],
     description: [''],
-    type: ['MEETING', [Validators.required]]
+    type: ['MEETING' as RoomType, [Validators.required]]
   });
 
   isEdit = !!this.data; 
@@ -58,9 +62,18 @@ export class RoomForm {
     this.loading.set(true);
     this.errorMessage.set(null);
 
+    const value = this.form.getRawValue();
+    const dto = {
+      name: value.name ?? '',
+      capacity: Number(value.capacity),
+      pricePerHour: Number(value.pricePerHour),
+      description: value.description ?? '',
+      type: value.type ?? 'MEETING'
+    }
+
       const request = this.isEdit
-      ? this.roomService.update(this.data.id, this.form.getRawValue())
-      : this.roomService.create(this.form.getRawValue());
+      ? this.roomService.update(this.data.id, dto)
+      : this.roomService.create(dto);
 
        request.subscribe({
       next: () => {
@@ -74,20 +87,6 @@ export class RoomForm {
         this.loading.set(false);
       }
     });
-
-    // this.roomService.create(this.form.getRawValue()).subscribe({
-      
-    //   next: () => {
-    //     this.dialogRef.close(true)
-    //   },
-    //   error: () => {
-    //     this.errorMessage.set('No pudo crearse la sala');
-    //     this.loading.set(false);
-    //   },
-    //   complete: () => {
-    //     this.loading.set(false);
-    //   },
-    // });
   }
 
   close() {
